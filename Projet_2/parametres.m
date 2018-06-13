@@ -20,7 +20,7 @@ Tn = Tb/beta;    % upsample sampling rate
 span = 20;       % rcos span for thinner bandwidth consumption
 %pwr = 200;       % channel power in mW
 
-%canal 
+% Canal 
 Eb_No = 0.1;
 random_delay = randi([0 Tb/Tn],1,K) % Délais aléatoire
 random_alphaN = (rand(1,1)) % facteur d’affaiblissement aléatoire (>1)
