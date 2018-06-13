@@ -1,0 +1,27 @@
+% Message
+Minfo = 150;           % Taille message à transmettre (en bits)
+Mseq = 10;             % Taille de la séquence de synchronisation 
+M = Minfo + Mseq;      % Taille des messages envoyés 
+
+% Système
+K = 4;          % Nombre de modules 
+N = 4;          % Nombre de canaux
+
+R = 1000;       % dBinary rate [bits / s]
+Tb = 1 / R;     % Time of one bit [s / bit]
+
+rolloff = 0.40;  % rolloff factor entre 0 et 1
+beta = 4*N;      % upsampling factor
+Tn = Tb/beta;    % upsample sampling rate
+span = 20;       % rcos span for thinner bandwidth consumption
+pwr = 200;       % channel power in mW
+
+% FIR
+L = 10;         % Nyquist filter limit
+nb = [];        % ???
+%oversampling = 4*N;      % Oversampling rate of the FIR
+oversampling = 64;
+
+Tn = Tb/oversampling;   %Time of digital sample
+Fn = 1/Tb;              % Frequency of digital sample
+
