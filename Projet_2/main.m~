@@ -1,9 +1,0 @@
-clear, close all
-
-parametres
-% generate data and send it
-emetteur
-% add noise and delay
-channel
-% filter data and read it
-receiver

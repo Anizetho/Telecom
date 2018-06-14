@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%% Canal %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------- CANAL -----------------------------------
 
 %Ajout du délais
 for i = 1:K
@@ -15,7 +15,7 @@ AWGN = awgn(Msg_Channel_dimmed,Eb_No);
 Msg_Channel_Noised = Msg_Channel_dimmed + AWGN;
 
 %Sommation des quatres canaux 
-Msg_Channel_sent= sum(Msg_Channel_Noised,1)
+Msg_Channel_sent= sum(Msg_Channel_Noised,1);
 
 %figure
-plot(Msg_Channel_sent)
+plot(Msg_Channel_sent);
