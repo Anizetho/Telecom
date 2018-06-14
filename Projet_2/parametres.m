@@ -18,9 +18,10 @@ span = 20;       % rcos span for thinner bandwidth consumption
 %pwr = 200;       % channel power in mW
 
 % Canal 
-Eb_No = 10;
-random_delay = randi([0 Tb/Tn],1,K) % Délais aléatoire
-random_alphaN = (rand(1,1)) % facteur d’affaiblissement aléatoire (>1)
+Eb_No = 30;                                     %SNR
+random_delay = randi([0 Tb/Tn],1,K)             % Délais aléatoire
+%random_alphaN = (rand(1,1))                    % facteur d-affaiblissement aléatoire (>1)
+alpha_N=0.97;                                   % facteur d-affaiblissement fixe (>1)  
 
 % Recepteur
 impulseL = 128;
