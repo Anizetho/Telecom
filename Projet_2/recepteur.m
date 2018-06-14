@@ -1,7 +1,5 @@
-% This work is licensed under the Creative Commons Attribution 4.0
-% International License. To view a copy of this license, visit
-% http://creativecommons.org/licenses/by/4.0/ or send a letter to
-% Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+%---------------------------- CODE RECEPTEUR -------------------------------
 
 % calculate the bandwidth limits for each channel
 cutoff = [carfreq-1/Tb carfreq+1/Tb]*2*Tn;
@@ -19,13 +17,13 @@ for n = 2:N
 end
 
 % separate channels
-s2High = conv2(data, 1, H);
+s2High = conv2(Msg_Channel_sent, 1, H);
 len2 = size(s2High,1);
 
-% normalise power to 'pwr' mW
-power = sum(s2High.^2, 1)/len2;
-ratio = (pwr*1e-3)./power;
-s2High = s2High.*sqrt(ratio);
+% % normalise power to 'pwr' mW
+% power = sum(s2High.^2, 1)/len2;
+% ratio = (pwr*1e-3)./power;
+% s2High = s2High.*sqrt(ratio);
 
 % demodulate
 t = (0:Tn:(len2-1)*Tn)'*ones(1,N);
@@ -43,9 +41,9 @@ s2 = conv2(rcos, 1, s2);
 % find filters delay
 [~,i] = max(H);
 % compensate the start trame
-s2t = s2(span*beta+i+shift-1:end, :);
+s2t = s2(span*beta+i-1:end, :);
 % generate the index vector
-s2i = 1:beta:beta*size(x,1);
+s2i = 1:beta:beta*size(message,1);
 % extract the values at index
 decoded = s2t(s2i,:);
 % quantize the extracted values
@@ -58,18 +56,18 @@ decoded = decoded>0;
 % grid, hold off
 
 % plot visual representation of the transmission
-% figure
-% subplot(2,1,1)
-% stem(linspace(0, len2*Tn, len2), s2High)
-% title('Representation temporelle du signal recu')
-% ylabel('Amplitude (v)'), xlabel('Times (s)')
-% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
-% grid
+figure
+subplot(2,1,1)
+stem(linspace(0, len2*Tn, len2), s2High)
+title('Representation temporelle du signal recu')
+ylabel('Amplitude (v)'), xlabel('Times (s)')
+legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
+grid
 
-% subplot(2,1,2)
-% semilogy(linspace(0, 1/Tn-1, len2), abs(fft(s2High/len2)).^2)
-% ylim([10^-6 10^0])
-% title('Representation frequentielle du signal recu')
-% ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
-% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
-% grid
+subplot(2,1,2)
+semilogy(linspace(0, 1/Tn-1, len2), abs(fft(s2High/len2)).^2)
+ylim([10^-6 10^0])
+title('Representation frequentielle du signal recu')
+ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
+legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
+grid

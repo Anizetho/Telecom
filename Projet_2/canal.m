@@ -3,7 +3,7 @@
 %Transposition de la matrice pour avoir k colonnes et M colonnes
 Msg_Channel = s1High.';
 
-figure('Name', 'Représentation_canal', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+%figure('Name', 'Représentation_canal', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
 
 % % plot visual representation of the transmission (emetteur)
 % subplot(2,1,1)
@@ -39,15 +39,15 @@ Msg_Channel_dimmed =  Msg_Channel_delayed .* random_alphaN;
 % grid
 % title('atténuation')
 
-figure
-plot(Msg_Channel_dimmed(1,:));
-title('atténuation')
+% figure;
+% plot(Msg_Channel_dimmed(1,:));
+% title('atténuation');
 
 %Ajout du bruit blanc gaussien 
-AWGN = awgn(Msg_Channel_dimmed,Eb_No);
+%AWGN = awgn(Msg_Channel_dimmed,Eb_No);
 
 %Addition du bruit blanc et signal atténué-décallé
-Msg_Channel_Noised = Msg_Channel_dimmed + AWGN;
+Msg_Channel_Noised = Msg_Channel_dimmed; %+ AWGN;
 
 % % plot visual representation of the transmission with AWGN
 % subplot(2,1,4)
@@ -59,6 +59,8 @@ Msg_Channel_Noised = Msg_Channel_dimmed + AWGN;
 
 %Sommation des quatres canaux 
 Msg_Channel_sent= sum(Msg_Channel_Noised,1);
+%Msg_Channel_sent= [zeros(shift,1); Msg_Channel_sent];
+
 
 % % plot visual representation of the transmission with sum of all channels
 % subplot(2,1,5)
