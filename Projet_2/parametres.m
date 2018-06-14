@@ -21,3 +21,8 @@ span = 20;       % rcos span for thinner bandwidth consumption
 Eb_No = 10;
 random_delay = randi([0 Tb/Tn],1,K) % Délais aléatoire
 random_alphaN = (rand(1,1)) % facteur d’affaiblissement aléatoire (>1)
+
+% Recepteur
+impulseL = 128;
+startSeq = [1 0 1 0 1 0 1 0 ... % test the channel response
+            1 1 1 1 1 1 1 1];   % set an unique sequence
