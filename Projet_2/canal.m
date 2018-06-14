@@ -1,7 +1,4 @@
 %%%%%%%%%%%%%%%%%%%% Canal %%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear all;
-close all;
-clc;
 
 %Ajout du délais
 for i = 1:K

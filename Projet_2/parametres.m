@@ -1,14 +1,11 @@
 
-codesymbol = @(x)x.*2-1;
-
-
 % Message
 Minfo = 90;         % Taille message à transmettre [en bits]
 Mseq = 10;          % Taille de la séquence de synchronisation 
 M = Minfo + Mseq;   % Taille des messages envoyés 
 
 % Système 
-K = 4;           % Nombre de modules 
+K = 2;           % Nombre de modules 
 N = 2;           % Nombre de canaux
 R = 10;          % Débit binaire [en bits / s]
 Tb = 1 / R;      % La durée d'un seul bit [en s / bit]
