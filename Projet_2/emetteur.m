@@ -41,19 +41,27 @@ message(message==0) = -1;
 
 % ------------------ (3) MODULATION ET MISE EN FORME ----------------------
 
-% shape to impulse
+% 3.1) Construction du filtre de mise en forme pour impulser
+
+%rcosdesign permet de créer un filtre en cosinus surélevé
 rcos = rcosdesign(rolloff, span, beta);
+
+%upsample permet de suréchantillonné la trame par un facteur beta pour 
+%augmenter le débit binaire . Ici, on a rajouté des zéros entre chaque 
+%symbole. Nous convoluons ensuite ce résulat par le filtre obtenu au point 
+%3.1 pour obtenir s1. 
 messageUp = upsample(message', beta);
 s1 = conv2(rcos, 1, messageUp);
 len1 = size(s1, 1);
 
-% les fréquences des différentes porteuses
+%3.2) Modulation 
+
+% Générer les fréquences des différentes porteuses
 carfreq = (0:N-1)'*2/Tb;
 
-% Modulation du message par la porteuse
+% Moduler le message par la porteuse
 t = (0:Tn:(len1-1)*Tn)'*ones(1,N);
 s1High = s1.*cos(2*pi*carfreq'.*t);
-
 
 % plot impulsions
 figure('Name', 'Représentation temporelle des impulsions utilisees', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);

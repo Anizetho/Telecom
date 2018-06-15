@@ -13,22 +13,17 @@ Tb = 1 / R;      % La duree d'un seul bit [en s / bit]
 % Emetteur
 rolloff = 0.40;  % Facteur de rolloff (varie entre 0 et 1)
 beta = 4*N;      % Facteur de surechantillonnage
-Tn = Tb/beta;    % Cadence Tn de la séquence d'échantillons en sortie du FIR
+Tn = Tb/beta;    % Cadence Tn de la séquence d?échantillons en sortie du FIR
 span = 20;       % rcos span for thinner bandwidth consumption
 %pwr = 200;       % channel power in mW
 
 % Canal 
-<<<<<<< HEAD
-Eb_No = 10;
-random_delay = randi([0 Tb/Tn],1,K); % delais aleatoire
-random_alphaN = (rand(1,1));         % facteur d'affaiblissement aleatoire (>1)
-shift = 4;
-=======
+
+%shift = 4;
 Eb_No = 30;                                     % SNR
-random_delay = randi([0 Tb/Tn],1,K)             % DÃ©lais alÃ©atoire
-%random_alphaN = (rand(1,1))                    % facteur d-affaiblissement alÃ©atoire (>1)
+random_delay = randi([0 Tb/Tn],1,K);             % delais aleatoire
+%random_alphaN = (rand(1,1))                    % facteur d-affaiblissement aléatoire (>1)
 alpha_N=0.97;                                   % facteur d-affaiblissement fixe (>1)  
->>>>>>> 718fefc6ae04488d0574bb357f07991943cfa2ed
 
 % Recepteur
 impulseL = 128;
