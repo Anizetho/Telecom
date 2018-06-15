@@ -63,6 +63,18 @@ carfreq = (0:N-1)'*2/Tb;
 t = (0:Tn:(len1-1)*Tn)'*ones(1,N); % Délimite la fenêtre
 s1High = s1.*cos(2*pi*carfreq'.*t);
 
+
+% Generate a time interval between -L*Tb and L*Tb with steps
+% equal to the sampling period Tn
+t_window = (-span/2*Tb):Tn:(span/2*Tb);
+% Carriers
+n = 0:(N-1);
+% Frequencies
+wn = 2 * pi*2*n / Tb; 
+carriers = cos(wn(1:N)'*t_window);
+modulated_fir = cos(wn(1:N)'*t_window) .* rcos;
+
+
 % Normalisation 
 power = sum(s1High.^2, 1)/len1;
 ratio = (pwr*1e-3)./power;

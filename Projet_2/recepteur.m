@@ -42,45 +42,49 @@ for n = 2:N
     s2(:,n) = conv(s2(:,n), impulse(end:-1:1), 'same'); % backward
 end
 
-% Filtrer le bruit de canal avec le filtre adapté
 s2 = conv2(rcos, 1, s2);
+[len3,~] = size(s2);
 % find filters delay
 [~,i] = max(H);
 % compensate the start trame
-s2t = s2(span*beta+i-1:end, :);
+s2t = zeros(len3,N);
+for n = 1:N
+    delay = span*beta+i(n)+shift-n;
+    s2t(1:len3-delay+1,n) = s2(delay:end,n);
+end
 % generate the index vector
-s2i = 1:beta:beta*size(message,1);
+s2i = 1:beta:beta*size(message,2);
 % extract the values at index
 decoded = s2t(s2i,:);
 % quantize the extracted values
 decoded = decoded>0;
 
 % hit markers *PEW* *PEW*
-% figure, hold on
-% stem(s2t(:,1))
-% stem(s2i, s2t(s2i,1), 'r*', 'MarkerSize', 8.0)
-% grid, hold off
+figure, hold on
+stem(s2t(:,1))
+stem(s2i, s2t(s2i,1), 'r*', 'MarkerSize', 8.0)
+grid, hold off
 
-% plot visual representation of the transmission
-figure
-subplot(2,1,1)
-stem(linspace(0, len2*Tn, len2), s2High)
-title('Representation temporelle du signal recu')
-ylabel('Amplitude (v)'), xlabel('Times (s)')
-legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
-grid
-
-subplot(2,1,2)
-semilogy(linspace(0, 1/Tn-1, len2), abs(fft(s2High/len2)).^2)
-ylim([10^-6 10^0])
-title('Representation frequentielle du signal recu')
-ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
-legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
-grid
-
-
-
-% compare the sent signal with the received one
+% % plot visual representation of the transmission
+% figure
+% subplot(2,1,1)
+% stem(linspace(0, len2*Tn, len2), s2High)
+% title('Representation temporelle du signal recu')
+% ylabel('Amplitude (v)'), xlabel('Times (s)')
+% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
+% grid
+% 
+% subplot(2,1,2)
+% semilogy(linspace(0, 1/Tn-1, len2), abs(fft(s2High/len2)).^2)
+% ylim([10^-6 10^0])
+% title('Representation frequentielle du signal recu')
+% ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
+% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
+% grid
+% 
+% 
+% 
+% % compare the sent signal with the received one
 figure
 subplot(2,1,1)
 stem(linspace(0, len1*Tn, len1), s1(:,1));
