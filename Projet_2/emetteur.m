@@ -4,20 +4,20 @@
 
 %--------------------------- (1) MESSAGE ----------------------------------
 
-% 1.1) GÈnÈrer le message ‡ transmettre : 
-% randi gÈnËre une matrice de K lignes et M colonnes contenant des nombres alÈatoires 
-% entre 0 et 1 distribuÈs uniformÈment. Les K lignes reprÈsente les canaux.
-% Vu qu'un module ne possËde N caunaux, il peut Èmettre sur N canaux.
-% Les M colonnes rÈprÈsentent la taille M des messages envoyÈs par les modules. 
+% 1.1) G√©n√©rer le message √† transmettre : 
+% randi g√©n√®re une matrice de K lignes et M colonnes contenant des nombres al√©atoires 
+% entre 0 et 1 distribu√©s uniform√©ment. Les K lignes repr√©sente les canaux.
+% Vu qu'un module ne poss√®de N caunaux, il peut √©mettre sur N canaux.
+% Les M colonnes r√©pr√©sentent la taille M des messages envoy√©s par les modules. 
 message = randi([0 1], K, Minfo); 
 
-% 1.2) GÈnÈrer la sÈquence de synchronisation : 
-% Ms reprÈsentent la taille des bits de synchronisation.
+% 1.2) G√©n√©rer la s√©quence de synchronisation : 
+% Ms repr√©sentent la taille des bits de synchronisation.
 leading = ones(K, Mseq);
 message = [leading message];
 
-% % Graphe du message original (avec sÈquence)
-% figure('Name', 'Message original avec sÈquence', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+% % Graphe du message original (avec s√©quence)
+% figure('Name', 'Message original avec s√©quence', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
 % hold on;
 % stem(1:Mseq, message(1, 1:Mseq), ':r');
 % stem((Mseq+1):M, message(1, (Mseq+1):end), ':b');
@@ -30,8 +30,8 @@ message = [leading message];
 % 2.1) Coder le message
 message(message==0) = -1;
 
-% % Graphe du message original codÈ
-% figure('Name', 'Message encodÈ', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+% % Graphe du message original cod√©
+% figure('Name', 'Message encod√©', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
 % hold on;
 % stem(1:Mseq, message(1, 1:Mseq), ':r');
 % stem((Mseq+1):M, message(1, (Mseq+1):end), ':b');
@@ -41,22 +41,32 @@ message(message==0) = -1;
 
 % ------------------ (3) MODULATION ET MISE EN FORME ----------------------
 
-% shape to impulse
+% ------------------ (3) MODULATION ET MISE EN FORME ----------------------
+
+% 3.1) Construction du filtre de mise en forme pour impulser
+
+%rcosdesign permet de cr√©er un filtre en cosinus sur√©lev√©
 rcos = rcosdesign(rolloff, span, beta);
+
+%upsample permet de sur√©chantillonn√© la trame par un facteur beta pour 
+%augmenter le d√©bit binaire . Ici, on a rajout√© des z√©ros entre chaque 
+%symbole. Nous convoluons ensuite ce r√©sulat par le filtre obtenu au point 
+%3.1 pour obtenir s1. 
 messageUp = upsample(message', beta);
 s1 = conv2(rcos, 1, messageUp);
 len1 = size(s1, 1);
 
-% les frÈquences des diffÈrentes porteuses
+%3.2) Modulation 
+
+% G√©n√©rer les fr√©quences des diff√©rentes porteuses
 carfreq = (0:N-1)'*2/Tb;
 
-% Modulation du message par la porteuse
+% Moduler le message par la porteuse
 t = (0:Tn:(len1-1)*Tn)'*ones(1,N);
 s1High = s1.*cos(2*pi*carfreq'.*t);
 
-
 % plot impulsions
-figure('Name', 'ReprÈsentation temporelle des impulsions utilisees', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+figure('Name', 'Repr√©sentation temporelle des impulsions utilisees', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
 hold on;
 iX = linspace(0, span/1e2, 1e2*span+1);
 iY = rcosdesign(rolloff, span, 1e2);
@@ -70,7 +80,7 @@ grid
 clear iX iY
 
 % plot visual representation of the transmission
-figure('Name', 'ReprÈsentation temporelle et frÈquentielle', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+figure('Name', 'Repr√©sentation temporelle et fr√©quentielle', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
 subplot(2,1,1)
 stem(linspace(0, len1*Tn, len1), s1High)
 title('Representation temporelle du signal envoye')
