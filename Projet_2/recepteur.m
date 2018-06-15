@@ -1,31 +1,37 @@
 
 %---------------------------- CODE RECEPTEUR -------------------------------
 
-% calculate the bandwidth limits for each channel
-cutoff = [carfreq-1/Tb carfreq+1/Tb]*2*Tn;
+% 1) Calculer la bande passante pour chaque canal
+cutoff_normalized = [carfreq-1/Tb carfreq+1/Tb]*2*Tn;
+bandwidth = (1+rolloff)/(2*Tb);
+cutoff2 = [-bandwidth+carfreq , bandwidth+carfreq] ;
+%cutoff_normalized = cutoff2 * (2 * Tn);
+
 % pre-allocate filters matrix
 H = zeros(impulseL, N);
 
-% first channel lowpass
-[bf,af] = butter(10, cutoff(1,2));
+% 2) Définir les réponses impulsionnelles des filtres analogiques
+% 2.1) pour les filtres passes-bas
+[bf,af] = butter(10, cutoff_normalized(1,2));
 H(:,1) = ifft(freqz(bf, af, impulseL, 'whole', 1/Tn));
 
-% others channels bandpass
+% 2.2) pour les filtres passe-haut
 for n = 2:N
-    [bf,af] = butter(10, [cutoff(n,1) cutoff(n,2)]);
+    [bf,af] = butter(10, [cutoff_normalized(n,1) cutoff_normalized(n,2)]);
     H(:,n) = ifft(freqz(bf, af, impulseL, 'whole', 1/Tn));
 end
 
-% separate channels
+% 3) Separation des signaux en réalisant la convolution du signal (canal) avec
+% la réponse impulsionnelle de chaque filtre (= chaque canal).
 s2High = conv2(Msg_Channel_sent, 1, H);
 len2 = size(s2High,1);
 
-% % normalise power to 'pwr' mW
-% power = sum(s2High.^2, 1)/len2;
-% ratio = (pwr*1e-3)./power;
-% s2High = s2High.*sqrt(ratio);
+% 4) Normalisation
+power = sum(s2High.^2, 1)/len2;
+ratio = (pwr*1e-3)./power;
+s2High = s2High.*sqrt(ratio);
 
-% demodulate
+% 5) Demodulation
 t = (0:Tn:(len2-1)*Tn)'*ones(1,N);
 s2 = s2High.*cos(2*pi*carfreq'.*t);
 s2(:,1) = s2High(:,1);
@@ -36,7 +42,7 @@ for n = 2:N
     s2(:,n) = conv(s2(:,n), impulse(end:-1:1), 'same'); % backward
 end
 
-% filter the canal noise with the adequate filter
+% Filtrer le bruit de canal avec le filtre adapté
 s2 = conv2(rcos, 1, s2);
 % find filters delay
 [~,i] = max(H);
@@ -71,3 +77,27 @@ title('Representation frequentielle du signal recu')
 ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
 legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
 grid
+
+
+
+% compare the sent signal with the received one
+figure
+subplot(2,1,1)
+stem(linspace(0, len1*Tn, len1), s1(:,1));
+title('Signal normalise envoye par l''emetteur')
+xlabel('Temps de transmission (s)')
+ylabel('Amplitude du signal')
+grid
+
+subplot(2,1,2)
+len3 = size(s2,1);
+stem(linspace(0, len3*Tn, len3), s2(:,1), 'Color', [0.85 0.33 0.1]);
+title('Signal recompose dans le receveur')
+xlabel('Temps de transmission (s)')
+ylabel('Amplitude du signal')
+grid
+
+% report QS
+% disp("Taux d'erreurs :")
+% errorRate = sum(xor(message, decoded))/size(x,1);
+% disp(errorRate)

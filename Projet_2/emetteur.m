@@ -9,11 +9,11 @@
 % entre 0 et 1 distribués uniformément. Les K lignes représente les canaux.
 % Vu qu'un module ne possède N caunaux, il peut émettre sur N canaux.
 % Les M colonnes réprésentent la taille M des messages envoyés par les modules. 
-message = randi([0 1], K, Minfo); 
+message = randi([0 1], N, Minfo); 
 
 % 1.2) Générer la séquence de synchronisation : 
 % Ms représentent la taille des bits de synchronisation.
-leading = ones(K, Mseq);
+leading = ones(N, Mseq);
 message = [leading message];
 
 % % Graphe du message original (avec séquence)
@@ -60,36 +60,45 @@ len1 = size(s1, 1);
 carfreq = (0:N-1)'*2/Tb;
 
 % Moduler le message par la porteuse
-t = (0:Tn:(len1-1)*Tn)'*ones(1,N);
+t = (0:Tn:(len1-1)*Tn)'*ones(1,N); % Délimite la fenêtre
 s1High = s1.*cos(2*pi*carfreq'.*t);
 
-% plot impulsions
-figure('Name', 'Représentation temporelle des impulsions utilisees', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
-hold on;
-iX = linspace(0, span/1e2, 1e2*span+1);
-iY = rcosdesign(rolloff, span, 1e2);
-plot(iX, iY' * ones(1, N) .* ...
-     cos(carfreq*linspace(0, 2*pi, span*1e2+1))')
-ylim([-max(iY)*1.1 +max(iY)*1.1])
-title("Representation temporelle des impulsions utilisees")
-ylabel("Coefficient d'amplitude"), xlabel("Temps (s)")
-legend(strcat("Canal ", num2str((1:N)')))
-grid
-clear iX iY
+% Normalisation 
+power = sum(s1High.^2, 1)/len1;
+ratio = (pwr*1e-3)./power;
+s1High = s1High.*sqrt(ratio);
 
-% plot visual representation of the transmission
-figure('Name', 'Représentation temporelle et fréquentielle', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
-subplot(2,1,1)
-stem(linspace(0, len1*Tn, len1), s1High)
-title('Representation temporelle du signal envoye')
-ylabel('Amplitude (v)'), xlabel('Times (s)')
-legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
-grid
+% Sommation de tous les canaux pour former le signal envoyé sur le médium.
+% signal = sum(s1High, 2);
 
-subplot(2,1,2)
-semilogy(linspace(0, 1/Tn-1, len1), abs(fft(s1High/len1)).^2)
-ylim([10^-6 10^0])
-title('Representation frequentielle du signal envoye')
-ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
-legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
-grid
+% ------------------------------ GRAPHES ----------------------------------
+% % plot impulsions
+% figure('Name', 'Représentation temporelle des impulsions utilisees', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+% hold on;
+% iX = linspace(0, span/1e2, 1e2*span+1);
+% iY = rcosdesign(rolloff, span, 1e2);
+% plot(iX, iY' * ones(1, N) .* ...
+%      cos(carfreq*linspace(0, 2*pi, span*1e2+1))')
+% ylim([-max(iY)*1.1 +max(iY)*1.1])
+% title("Representation temporelle des impulsions utilisees")
+% ylabel("Coefficient d'amplitude"), xlabel("Temps (s)")
+% legend(strcat("Canal ", num2str((1:N)')))
+% grid
+% clear iX iY
+% 
+% % plot visual representation of the transmission
+% figure('Name', 'Représentation temporelle et fréquentielle', 'NumberTitle', 'off', 'rend','painters','pos',[10 200 1200 200]);
+% subplot(2,1,1)
+% stem(linspace(0, len1*Tn, len1), s1High)
+% title('Representation temporelle du signal envoye')
+% ylabel('Amplitude (v)'), xlabel('Times (s)')
+% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'NorthEast')
+% grid
+% 
+% subplot(2,1,2)
+% semilogy(linspace(0, 1/Tn-1, len1), abs(fft(s1High/len1)).^2)
+% ylim([10^-6 10^0])
+% title('Representation frequentielle du signal envoye')
+% ylabel('Puissance (dBm)'), xlabel('Frequency (Hz)')
+% legend(strcat("Canal ", num2str((1:N)')), 'Location', 'North')
+% grid
