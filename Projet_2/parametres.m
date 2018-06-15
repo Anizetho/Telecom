@@ -13,7 +13,7 @@ Tb = 1 / R;      % La duree d'un seul bit [en s / bit]
 % Emetteur
 rolloff = 0.40;  % Facteur de rolloff (varie entre 0 et 1)
 beta = 4*N;      % Facteur de surechantillonnage
-Tn = Tb/beta;    % Cadence Tn de la séquence d?échantillons en sortie du FIR
+Tn = Tb/beta;    % Cadence Tn de la séquence d'échantillons en sortie du FIR
 span = 20;       % rcos span for thinner bandwidth consumption
 %pwr = 200;       % channel power in mW
 
